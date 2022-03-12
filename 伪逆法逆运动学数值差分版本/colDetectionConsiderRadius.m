@@ -1,13 +1,15 @@
-function [flag] = colDetectionConsiderRadius(theta,wallsInfo)
-% 判断是否发生碰撞
-% 考虑了机械臂的半径，用拉格朗日乘子法求解极值
+function [flag] = colDetectionConsiderRadius(theta,bias,wallsInfo)
+%input：   T:               transformation matrix calculated by 'calT'
+%output:   wallsInfo:       obstacles' information
+
+% Determines whether a collision occurred
+% Considering the radius of the manipulator, Lagrange multiplier method is used to solve the extreme value
     global robotRadius
     global H
-    flag=0;
-%     robotRadius=2;
     T=zeros(4,4,24);
+    
 
-    T1 =[cos(theta(1)), -sin(theta(1)), 0, 0;
+    T1 =[cos(theta(1)), -sin(theta(1)), 0, bias;
     sin(theta(1)),  cos(theta(1)), 0, 0;
               0,            0, 1, 0;
               0,            0, 0, 1];
@@ -18,7 +20,7 @@ function [flag] = colDetectionConsiderRadius(theta,wallsInfo)
     -sin(theta(2)), -cos(theta(2)), 0, 0;
                0,            0, 0, 1];
 
-    T(:,:,2)=T1*T2;
+    T(:,:,2)=T(:,:,1)*T2;
 
     for i =1:11
         T(:,:,i*2+1)=T(:,:,i*2)*...
@@ -33,6 +35,8 @@ function [flag] = colDetectionConsiderRadius(theta,wallsInfo)
         -sin(theta(i*2+2)),  -cos(theta(i*2+2)),  0, 0;
               0,            0,  0, 1];
     end
+    flag=0;
+%     robotRadius=2;
 
     for i = 1:24
         vec=T(1:3,1,i);
@@ -42,7 +46,7 @@ function [flag] = colDetectionConsiderRadius(theta,wallsInfo)
             continue
         end
         for j=1:length(wallsInfo)
-%           检测是否与前壁碰撞
+%           Detect collision with front wall
             x=wallsInfo(j).front;
             if (p0(1)-x)*(p0(1)+p1(1)-x)<=0
                 syms y z lamda
@@ -67,7 +71,7 @@ function [flag] = colDetectionConsiderRadius(theta,wallsInfo)
                 end
             end
 
-%           检测是否与后壁碰撞
+%           Detect collision with rear wall
             x=wallsInfo(j).back;
             if (p0(1)-x)*(p0(1)+p1(1)-x)<=0
                 syms y z lamda

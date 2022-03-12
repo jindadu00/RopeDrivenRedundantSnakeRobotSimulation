@@ -1,4 +1,4 @@
-function output = inverseKinematicsPSO(X,theta)
+function output = inverseKinematicsPSO(X,theta,bias)
 %输入：目标位姿X，目前的关节角tempTheta，允许的误差error
 %输出：解出来的关节角theta
 
@@ -53,7 +53,7 @@ end
 gbest = pop_x;                                % 每个个体的历史最佳位置
 fitness_gbest=zeros(sizepop);
 for i = 1:sizepop
-    q=inverseKinematics6D(X,pop_x(:,i));
+    q=inverseKinematics(X,pop_x(:,i),bias);
     dq=q-theta;
     fitness_gbest(i) = norm(q)*(1+norm(dq)^0.01);
 end                                           % 每个个体的历史最佳适应度
@@ -110,7 +110,7 @@ while iter <= ger
 %         end
   
         %    计算新种群各个个体位置的适应度
-        q=inverseKinematics6D(X,pop_x(:,j));
+        q=inverseKinematics(X,pop_x(:,j),bias);
         dq=q-theta;
         fitness_pop(j) = norm(q)*(1+norm(dq)^0.01);   % 当前个体的适应度，增加dq惩罚项
 
@@ -131,6 +131,6 @@ while iter <= ger
 %     fitness_zbest
     iter = iter+1;
 end
-output=inverseKinematics6D(X,zbest);
+output=inverseKinematics(X,zbest,bias);
 end
 

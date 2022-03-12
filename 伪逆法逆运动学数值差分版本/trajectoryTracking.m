@@ -11,7 +11,8 @@ points =(center + radius*[  zeros(size(theta)) cos(theta) sin(theta)])';
 
 % hold on
 q=ones(24,1);
-targetPos=forwardKinematics6D(q);
+bias=linspace(0,20,length(t));
+targetPos=forwardKinematics(q,bias(1),1);
 for i = 1:length(t)
 %     i
     bx = points(1,i);
@@ -23,26 +24,28 @@ for i = 1:length(t)
 %     TR=transl(targetPos)*tform; %位姿齐次矩阵
 %     grid on
 
-    
-    q=inverseKinematics6D([targetPos;eulerAngle],q);
+   
+    q=inverseKinematics([targetPos;eulerAngle],q,bias(i));
     plot3(points(1,:),points(2,:),points(3,:),'r')
     hold on
+    axis([-25 80 -80 80 -80 80])
+
     title("伪逆法实现逆运动学轨迹跟踪");
     xlabel('x/米','FontSize',12);
     ylabel('y/米','FontSize',12);
     zlabel('z/米','FontSize',12);
-    axis([-10 80 -80 80 -80 80])
     plot3(bx,by,bz,'*','LineWidth',1);
-    drawRobot(q);%动画演示
-    axis([-10 80 -80 80 -80 80])
-    drawnow;
-    F=getframe(gcf);
-    I=frame2im(F);
-    [I,map]=rgb2ind(I,256);
-    if i == 1
-        imwrite(I,map,'test.gif','gif', 'Loopcount',inf,'DelayTime',0.1);
-    else
-        imwrite(I,map,'test.gif','gif','WriteMode','append','DelayTime',0.1);
-    end
+    drawRobot(q,bias(i));%动画演示
+    axis([-25 80 -80 80 -80 80])
+
+%     drawnow;
+%     F=getframe(gcf);
+%     I=frame2im(F);
+%     [I,map]=rgb2ind(I,256);
+%     if i == 1
+%         imwrite(I,map,'test.gif','gif', 'Loopcount',inf,'DelayTime',0.1);
+%     else
+%         imwrite(I,map,'test.gif','gif','WriteMode','append','DelayTime',0.1);
+%     end
 end
 
