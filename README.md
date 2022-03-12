@@ -1,1 +1,3 @@
 # RopeDrivenRedundantSnakeRobotSimulation
+
+It was part of my undergraduate thesis...
