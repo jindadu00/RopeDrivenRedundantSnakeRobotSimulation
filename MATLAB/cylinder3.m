@@ -69,6 +69,7 @@ set(Cylinder,'ZData',get(Cylinder,'ZData')+X1(3))
 
 % Setting the color to the cylinder and the end plates
 set(Cylinder,'FaceColor',cyl_color)
+set(Cylinder,'FaceAlpha',0.1)
 if closed==1
     set([EndPlate1 EndPlate2],'FaceColor',cyl_color)
 else

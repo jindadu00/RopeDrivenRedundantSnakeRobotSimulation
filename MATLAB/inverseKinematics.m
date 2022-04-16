@@ -1,4 +1,4 @@
-function output = inverseKinematics(X,tmpTheta,bias)
+function [theta,bias] = inverseKinematics(X,tmpTheta,tmpBias)
 %input：   X:               target positions
 %          tempTheta:       current joint angles
 %output:   theta:           output joint angles
@@ -13,13 +13,14 @@ else
         disp('error')
     end
 end
-x=forwardKinematics(tmpTheta,bias,flag);
+x=forwardKinematics(tmpTheta,tmpBias,flag);
 dX=X-x;
 
 while dX'*dX>=1e-10
-    dtheta=rightInvJac(tmpTheta,flag)*dX;
-    tmpTheta=tmpTheta+dtheta;
-    for i=1:24
+    dq=rightInvJac(tmpTheta,tmpBias,flag)*dX;
+    tmpTheta=tmpTheta+dq(1:12);
+    tmpBias=tmpBias+dq(13);
+    for i=1:12
         while tmpTheta(i)>pi
             tmpTheta(i)=tmpTheta(i)-2*pi;
         end
@@ -27,10 +28,11 @@ while dX'*dX>=1e-10
             tmpTheta(i)=tmpTheta(i)+2*pi;
         end
     end
-    x=forwardKinematics(tmpTheta,bias,flag);
+    x=forwardKinematics(tmpTheta,tmpBias,flag);
     dX=X-x;
 end
 
-output=tmpTheta;
+theta=tmpTheta;
+bias=tmpBias;
 end
 

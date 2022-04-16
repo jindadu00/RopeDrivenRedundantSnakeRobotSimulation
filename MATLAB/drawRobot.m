@@ -3,7 +3,7 @@ function [] = drawRobot(theta,bias)
 %output:   Visualize the robotic arm
     global H
 
-    T=zeros(4,4,24);
+    T=zeros(4,4,12);
     
 
     T1 =[cos(theta(1)), -sin(theta(1)), 0, bias;
@@ -19,7 +19,7 @@ function [] = drawRobot(theta,bias)
 
     T(:,:,2)=T(:,:,1)*T2;
 
-    for i =1:11
+    for i =1:5
         T(:,:,i*2+1)=T(:,:,i*2)*...
         [cos(theta(i*2+1)), -sin(theta(i*2+1)),  0, H;
               0,            0, -1, 0;
@@ -39,14 +39,8 @@ function [] = drawRobot(theta,bias)
     r7 = T(1:3,4,7);
     r9 = T(1:3,4,9);
     r11 = T(1:3,4,11);
-    r13 = T(1:3,4,13);
-    r15 = T(1:3,4,15);
-    r17 = T(1:3,4,17);
-    r19 = T(1:3,4,19);
-    r21 = T(1:3,4,21);
-    r23 = T(1:3,4,23);
-    r25 = T(:,:,24)*[H;0;0;1];
-    r25 = r25(1:3);
+    r13 = T(:,:,12)*[H;0;0;1];
+    r13 = r13(1:3);
     bias=T(1,4,1);
     baseR= [bias;0;0];
     baseL= [bias-20;0;0];
@@ -57,20 +51,14 @@ function [] = drawRobot(theta,bias)
 
 
 
-    radius=2;
-    cylinder3(r0,r3,radius,10,'r',0,1);
-    cylinder3(r3,r5,radius,10,'b',0,1);
-    cylinder3(r5,r7,radius,10,'r',0,1);
-    cylinder3(r7,r9,radius,10,'b',0,1);
-    cylinder3(r9,r11,radius,10,'r',0,1);
-    cylinder3(r11,r13,radius,10,'b',0,1);
-    cylinder3(r13,r15,radius,10,'r',0,1);
-    cylinder3(r15,r17,radius,10,'b',0,1);
-    cylinder3(r17,r19,radius,10,'r',0,1);
-    cylinder3(r19,r21,radius,10,'b',0,1);
-    cylinder3(r21,r23,radius,10,'r',0,1);
-    cylinder3(r23,r25,radius,10,'b',1,1);
-    cylinder3(baseL,baseR,10,20,'g',1,0);
+    radius=5;
+    cylinder3(r0,r3,radius,10,'r',0,0);
+    cylinder3(r3,r5,radius,10,'b',0,0);
+    cylinder3(r5,r7,radius,10,'r',0,0);
+    cylinder3(r7,r9,radius,10,'b',0,0);
+    cylinder3(r9,r11,radius,10,'r',0,0);
+    cylinder3(r11,r13,radius,10,'b',0,0);
+    cylinder3(baseL,baseR,10,20,'g',0,0);
     xlabel('x/cm','FontSize',12);
     ylabel('y/cm','FontSize',12);
     zlabel('z/cm','FontSize',12);
